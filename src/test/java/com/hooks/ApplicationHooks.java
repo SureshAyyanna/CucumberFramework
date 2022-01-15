@@ -17,14 +17,32 @@ public class ApplicationHooks {
 	private WebDriver driver;
 	private ConfigReader configReader;
 	Properties prop;
+	
+	public static String featureName = null;
+	public static String scenarioName = null;
 
-	@Before(order = 0)
-	public void getProperty() {
-		configReader = new ConfigReader();
-		prop = configReader.init_prop();
+	@Before(order=0)
+	public static String getTheScenarioName(Scenario scenario) {
+		return scenarioName = scenario.getName();
+
 	}
 
-	@Before(order = 1)
+	@Before(order=1)
+	public static String getTheFeatureName(Scenario scenario) {
+		scenario.getSourceTagNames();
+		String rawFeatureName = scenario.getId().split(";")[0].replace("-", " ");
+
+		featureName = rawFeatureName.substring(0, 1).toUpperCase() + rawFeatureName.substring(1);
+
+		return featureName;
+	}
+	@Before(order = 2)
+	public void getProperty() {
+		configReader = new ConfigReader();
+		prop = configReader.init_prop();	
+	}
+
+	@Before(order = 3)
 	public void launchBrowser() {
 		String browserName = prop.getProperty("browser");
 		driverFactory = new DriverFactory();
